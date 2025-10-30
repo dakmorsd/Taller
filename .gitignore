@@ -1,0 +1,6 @@
+/appsettings.Development.json
+/bin
+/obj
+/tasks.db
+/tasks.db-shm
+/tasks.db-wal
