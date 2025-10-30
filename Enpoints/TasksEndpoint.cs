@@ -23,5 +23,15 @@ public static class TasksEndpoint
                 Results.BadRequest();
         })
         .WithName("AddTask");
+
+        application.MapGet("/tasks/summary", async (TaskService taskService, AiService aiService) =>
+        {
+            var tasks = await taskService.GetAllAsync(1, 1000);
+            var descriptions = tasks.Select(t => t.Description).ToList();
+            var summary = await aiService.GetTasksSummaryAsync(descriptions);
+
+            return Results.Ok(new { summary });
+        })
+        .WithName("GetTasksSummary");
     }
 }

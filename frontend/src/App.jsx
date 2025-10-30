@@ -12,6 +12,8 @@ export default function App() {
 	const [description, setDescription] = useState('');
 	const [connection, setConnection] = useState(null);
 	const [showModal, setShowModal] = useState(false);
+	const [summary, setSummary] = useState('');
+	const [loadingSummary, setLoadingSummary] = useState(false);
 
 	useEffect(() => {
 		const newConnection = new signalR.HubConnectionBuilder()
@@ -62,17 +64,44 @@ export default function App() {
 		setShowModal(false);
 	};
 
+	const handleSummary = async () => {
+		setLoadingSummary(true);
+		try {
+			const response = await axios.get(`${API_URL}/tasks/summary`);
+			setSummary(response.data.summary);
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setLoadingSummary(false);
+		}
+	};
+
 	return (
 		<div className="container mt-5">
 			<div className="d-flex justify-content-between align-items-center mb-4">
 				<h1>Tasks</h1>
-				<button
-					className="btn btn-primary"
-					onClick={() => setShowModal(true)}
-				>
-					Add Task
-				</button>
+				<div>
+					<button
+						className="btn btn-success me-2"
+						onClick={handleSummary}
+						disabled={loadingSummary}
+					>
+						{loadingSummary ? 'Loading...' : 'Summary'}
+					</button>
+					<button
+						className="btn btn-primary"
+						onClick={() => setShowModal(true)}
+					>
+						Add Task
+					</button>
+				</div>
 			</div>
+
+			{summary && (
+				<div className="alert alert-info mb-4">
+					<strong>Summary:</strong> {summary}
+				</div>
+			)}
 
 			<TaskTable tasks={tasks} />
 

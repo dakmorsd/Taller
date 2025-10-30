@@ -12,6 +12,7 @@ builder.Services.AddDbContext<TaskDbContext>(options =>
 
 builder.Services.AddScoped<TaskRepository>();
 builder.Services.AddScoped<TaskService>();
+builder.Services.AddScoped<AiService>();
 
 builder.Services.AddSignalR();
 
@@ -31,7 +32,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<TaskDbContext>();
-    db.Database.EnsureCreated();
+    db.Database.Migrate();
 }
 
 app.UseHttpsRedirection();
